@@ -12,6 +12,11 @@ function percent(used: number | null, total: number | null): number | null {
 export function buildOverview(snapshot: MetricsSnapshot) {
   const { host, containers, coolify } = snapshot;
 
+  // UUID → nome amigável (apps e bancos do Coolify)
+  const coolifyNames = new Map<string, string>();
+  for (const app of coolify.applications) coolifyNames.set(app.uuid, app.name);
+  for (const database of coolify.databases) coolifyNames.set(database.uuid, database.name);
+
   return {
     collectedAt: snapshot.collectedAt.toISOString(),
     host: {
@@ -36,6 +41,10 @@ export function buildOverview(snapshot: MetricsSnapshot) {
     containers: containers.map((container) => ({
       id: container.id,
       name: container.name,
+      /** nome legível: o container do Coolify é nomeado pelo UUID do recurso */
+      displayName:
+        (container.coolifyUuid ? coolifyNames.get(container.coolifyUuid) : undefined) ??
+        container.name,
       image: container.image,
       state: container.state,
       status: container.status,

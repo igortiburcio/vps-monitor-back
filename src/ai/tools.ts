@@ -36,7 +36,7 @@ export function buildTools(deps: ToolDependencies) {
         collectedAt: overview.collectedAt,
         host: overview.host,
         containers: overview.containers.map((container) => ({
-          name: container.name,
+          name: container.displayName,
           state: container.state,
           cpuPct: container.cpuPct,
           memPct: container.memPct,
@@ -105,16 +105,17 @@ export function buildTools(deps: ToolDependencies) {
         return 'Nenhum container visível (o socket do Docker pode estar indisponível).';
       }
 
+      const overview = buildOverview(snapshot);
+
       return json(
-        snapshot.containers.map((container) => ({
-          name: container.name,
-          image: container.image,
+        overview.containers.map((container) => ({
+          name: container.displayName,
           state: container.state,
           health: container.health,
-          coolifyUuid: container.coolifyUuid,
-          cpuPct: container.stats?.cpuPct ?? null,
-          memUsed: container.stats?.memUsed ?? null,
-          memLimit: container.stats?.memLimit ?? null,
+          cpuPct: container.cpuPct,
+          memPct: container.memPct,
+          memUsed: container.memUsed,
+          memLimit: container.memLimit,
         })),
       );
     },
@@ -129,17 +130,23 @@ export function buildTools(deps: ToolDependencies) {
   const containerLogs = tool(
     async ({ name, lines }) => {
       const snapshot = await deps.metrics.ensure();
-      const container = snapshot?.containers.find(
-        (item) => item.name === name || item.id.startsWith(name) || item.name.includes(name),
+      const containers = snapshot ? buildOverview(snapshot).containers : [];
+
+      const container = containers.find(
+        (item) =>
+          item.displayName === name ||
+          item.name === name ||
+          item.id.startsWith(name) ||
+          item.displayName.includes(name),
       );
 
       if (!container) {
-        const available = snapshot?.containers.map((item) => item.name).join(', ') ?? 'nenhum';
+        const available = containers.map((item) => item.displayName).join(', ') || 'nenhum';
         return `Container "${name}" não encontrado. Disponíveis: ${available}`;
       }
 
       const raw = await deps.docker.logs(container.id, lines);
-      if (raw === null) return `Não foi possível ler os logs de "${container.name}".`;
+      if (raw === null) return `Não foi possível ler os logs de "${container.displayName}".`;
 
       return truncate(sanitizeSecrets(raw), 6000);
     },
