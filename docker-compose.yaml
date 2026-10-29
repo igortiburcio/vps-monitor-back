@@ -33,6 +33,8 @@ services:
       # Coolify escuta em 8080 dentro do container dele, publicado na 8000 do host.
       # Evita o hairpin pelo Cloudflare ao chamar a própria API.
       - 'host.docker.internal:host-gateway'
+      # Vai direto ao Traefik (Host header preservado), sem passar pelo Cloudflare
+      - 'coolify.duduisonfire.com:195.35.16.157'
     networks:
       - default
       # Necessário para alcançar o Postgres e o Traefik (rodam na network do Coolify)
