@@ -111,7 +111,7 @@ export class CoolifyService {
   private readonly logger = new Logger(CoolifyService.name);
   private cache: { at: number; data: CoolifyInventory } | null = null;
   private inflight: Promise<CoolifyInventory> | null = null;
-  private warned = false;
+  private lastWarnAt = 0;
 
   get configured(): boolean {
     return Boolean(env.COOLIFY_URL && env.COOLIFY_TOKEN);
@@ -179,6 +179,11 @@ export class CoolifyService {
       this.fetch<RawService[]>('/services'),
     ]);
 
+    // Se todas as chamadas falharam, não cacheia: a próxima requisição tenta de novo.
+    const allFailed = [applications, databases, servers, services].every(
+      (result) => result === null,
+    );
+
     const data: CoolifyInventory = {
       configured: true,
       applications: (applications ?? []).map((app) => ({
@@ -214,7 +219,9 @@ export class CoolifyService {
       fetchedAt: new Date(),
     };
 
-    this.cache = { at: Date.now(), data };
+    if (!allFailed) {
+      this.cache = { at: Date.now(), data };
+    }
 
     return data;
   }
@@ -244,8 +251,11 @@ export class CoolifyService {
   }
 
   private warnOnce(message: string): void {
-    if (this.warned) return;
-    this.warned = true;
-    this.logger.warn(`${message} — seção do Coolify ficará vazia`);
+    const now = Date.now();
+    // evita spam, mas continua visível se a falha persistir
+    if (now - this.lastWarnAt < 5 * 60_000) return;
+
+    this.lastWarnAt = now;
+    this.logger.warn(`${message} — seção do Coolify pode ficar vazia`);
   }
 }
