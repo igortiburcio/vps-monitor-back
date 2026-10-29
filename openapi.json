@@ -1,0 +1,497 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "HealthController_check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The Health Check is successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["ok", "degraded"],
+                      "example": "ok"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up",
+                          "responseTime": 12
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": {
+                          "status": {
+                            "type": "string",
+                            "enum": ["up", "degraded", "down"]
+                          },
+                          "responseTime": {
+                            "type": "number",
+                            "description": "Time the health indicator took to respond, in ms"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {},
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": {
+                          "status": {
+                            "type": "string",
+                            "enum": ["up", "degraded", "down"]
+                          },
+                          "responseTime": {
+                            "type": "number",
+                            "description": "Time the health indicator took to respond, in ms"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up",
+                          "responseTime": 12
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": {
+                          "status": {
+                            "type": "string",
+                            "enum": ["up", "degraded", "down"]
+                          },
+                          "responseTime": {
+                            "type": "number",
+                            "description": "Time the health indicator took to respond, in ms"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The Health Check is not successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["error", "shutting_down"],
+                      "example": "error"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up",
+                          "responseTime": 12
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": {
+                          "status": {
+                            "type": "string",
+                            "enum": ["up", "degraded", "down"]
+                          },
+                          "responseTime": {
+                            "type": "number",
+                            "description": "Time the health indicator took to respond, in ms"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect",
+                          "responseTime": 3005
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": {
+                          "status": {
+                            "type": "string",
+                            "enum": ["up", "degraded", "down"]
+                          },
+                          "responseTime": {
+                            "type": "number",
+                            "description": "Time the health indicator took to respond, in ms"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up",
+                          "responseTime": 12
+                        },
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect",
+                          "responseTime": 3005
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": ["status"],
+                        "properties": {
+                          "status": {
+                            "type": "string",
+                            "enum": ["up", "degraded", "down"]
+                          },
+                          "responseTime": {
+                            "type": "number",
+                            "description": "Time the health indicator took to respond, in ms"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["health"]
+      }
+    },
+    "/api/v1/me": {
+      "get": {
+        "operationId": "MeController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["auth"]
+      }
+    },
+    "/api/v1/overview": {
+      "get": {
+        "operationId": "OverviewController_overview",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["overview"]
+      }
+    },
+    "/api/v1/host/current": {
+      "get": {
+        "operationId": "HostController_current",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["host"]
+      }
+    },
+    "/api/v1/host/history": {
+      "get": {
+        "operationId": "HostController_series",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["host"]
+      }
+    },
+    "/api/v1/containers": {
+      "get": {
+        "operationId": "ContainersController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["containers"]
+      }
+    },
+    "/api/v1/containers/{id}": {
+      "get": {
+        "operationId": "ContainersController_detail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["containers"]
+      }
+    },
+    "/api/v1/containers/{id}/logs": {
+      "get": {
+        "operationId": "ContainersController_logs",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["containers"]
+      }
+    },
+    "/api/v1/coolify/applications": {
+      "get": {
+        "operationId": "CoolifyController_applications",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["coolify"]
+      }
+    },
+    "/api/v1/coolify/databases": {
+      "get": {
+        "operationId": "CoolifyController_databases",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["coolify"]
+      }
+    },
+    "/api/v1/coolify/servers": {
+      "get": {
+        "operationId": "CoolifyController_servers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["coolify"]
+      }
+    },
+    "/api/v1/coolify/deployments": {
+      "get": {
+        "operationId": "CoolifyController_deployments",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["coolify"]
+      }
+    },
+    "/api/v1/events/stream": {
+      "get": {
+        "operationId": "EventsController_stream",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["events"]
+      }
+    },
+    "/api/v1/ai/chat": {
+      "post": {
+        "operationId": "AiController_chat",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["ai"]
+      }
+    },
+    "/api/v1/ai/conversations": {
+      "get": {
+        "operationId": "AiController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["ai"]
+      }
+    },
+    "/api/v1/ai/conversations/{id}": {
+      "get": {
+        "operationId": "AiController_detail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["ai"]
+      }
+    }
+  },
+  "info": {
+    "title": "VPS Monitor API",
+    "description": "Métricas da VPS, containers e chat com LLM",
+    "version": "0.1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {}
+  }
+}

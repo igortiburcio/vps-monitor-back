@@ -1,0 +1,31 @@
+# Referência de deploy no Coolify.
+# A API em si é deployada como app "Dockerfile" (ver docs/deploy-coolify.md);
+# este compose sobe o proxy read-only do socket do Docker.
+
+services:
+  docker-socket-proxy:
+    image: tecnativa/docker-socket-proxy:0.3
+    container_name: vps-monitor-socket-proxy
+    restart: unless-stopped
+    environment:
+      # Somente leitura: qualquer POST é bloqueado no proxy
+      CONTAINERS: 1
+      INFO: 1
+      VERSION: 1
+      POST: 0
+      EXEC: 0
+      IMAGES: 0
+      NETWORKS: 0
+      VOLUMES: 0
+      EVENTS: 0
+      SYSTEM: 0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - coolify
+    expose:
+      - '2375'
+
+networks:
+  coolify:
+    external: true

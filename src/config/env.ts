@@ -20,6 +20,7 @@ export const envSchema = z.object({
   SEED_PASSWORD: z.string().min(8).optional(),
 
   HOST_PROC: z.string().default('/proc'),
+  HOST_SYS: z.string().default('/sys'),
   HOST_ROOT: z.string().default('/'),
   DOCKER_PROXY_URL: z.url().default('http://docker-socket-proxy:2375'),
 
