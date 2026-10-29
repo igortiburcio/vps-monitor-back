@@ -12,7 +12,8 @@ import { env } from '../../config/env.js';
  * Usado pelo `db:setup` e pelo entrypoint do container.
  */
 export async function runMigrations(databaseUrl: string = env.DATABASE_URL): Promise<void> {
-  const migrationsFolder = resolve(import.meta.dirname, '../../../../../drizzle');
+  // scripts -> database -> infra -> src -> /app
+  const migrationsFolder = resolve(import.meta.dirname, '../../../../drizzle');
 
   if (!existsSync(migrationsFolder)) {
     throw new Error('Pasta drizzle/ não encontrada. Rode `bun run db:generate` primeiro.');
