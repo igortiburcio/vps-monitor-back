@@ -53,8 +53,8 @@ export interface DockerStats {
   blockWrite: number;
 }
 
-/** Containers criados pelo Coolify são nomeados `{uuid}-{timestamp}`. */
-const COOLIFY_NAME_PREFIX = /^([a-z0-9]{20,})-/;
+/** Containers do Coolify: `{uuid}`, `{uuid}-{timestamp}` ou `{uuid}-proxy`. */
+const COOLIFY_NAME_PREFIX = /^([a-z0-9]{20,})(?:-|$)/;
 
 @Injectable()
 export class DockerService {
