@@ -27,6 +27,12 @@ export class CoolifyController {
     return { configured: inventory.configured, servers: inventory.servers };
   }
 
+  @Get('services')
+  async services() {
+    const inventory = await this.coolify.inventory();
+    return { configured: inventory.configured, services: inventory.services };
+  }
+
   @Get('deployments')
   async deployments() {
     const deployments = await this.coolify.deployments();

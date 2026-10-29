@@ -29,11 +29,19 @@ export interface CoolifyServer {
   isCoolifyHost: boolean;
 }
 
+export interface CoolifyServiceItem {
+  uuid: string;
+  name: string;
+  type: string;
+  status: string;
+}
+
 export interface CoolifyInventory {
   configured: boolean;
   applications: CoolifyApplication[];
   databases: CoolifyDatabase[];
   servers: CoolifyServer[];
+  services: CoolifyServiceItem[];
   fetchedAt: Date | null;
 }
 
@@ -75,6 +83,14 @@ interface RawServer {
   is_coolify_host?: boolean;
 }
 
+interface RawService {
+  uuid: string;
+  name: string;
+  service_type?: string;
+  type?: string;
+  status?: string;
+}
+
 interface RawDeployment {
   uuid?: string;
   deployment_uuid?: string;
@@ -103,7 +119,14 @@ export class CoolifyService {
 
   async inventory(): Promise<CoolifyInventory> {
     if (!this.configured) {
-      return { configured: false, applications: [], databases: [], servers: [], fetchedAt: null };
+      return {
+        configured: false,
+        applications: [],
+        databases: [],
+        servers: [],
+        services: [],
+        fetchedAt: null,
+      };
     }
 
     if (this.cache && Date.now() - this.cache.at < CACHE_TTL_MS) {
@@ -149,10 +172,11 @@ export class CoolifyService {
   }
 
   private async load(): Promise<CoolifyInventory> {
-    const [applications, databases, servers] = await Promise.all([
+    const [applications, databases, servers, services] = await Promise.all([
       this.fetch<RawApplication[]>('/applications'),
       this.fetch<RawDatabase[]>('/databases'),
       this.fetch<RawServer[]>('/servers'),
+      this.fetch<RawService[]>('/services'),
     ]);
 
     const data: CoolifyInventory = {
@@ -180,6 +204,12 @@ export class CoolifyService {
         isReachable: server.is_reachable ?? false,
         isUsable: server.is_usable ?? false,
         isCoolifyHost: server.is_coolify_host ?? false,
+      })),
+      services: (services ?? []).map((service) => ({
+        uuid: service.uuid,
+        name: service.name,
+        type: service.service_type ?? service.type ?? 'service',
+        status: service.status ?? 'unknown',
       })),
       fetchedAt: new Date(),
     };

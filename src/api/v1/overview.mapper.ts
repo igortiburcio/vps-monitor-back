@@ -16,6 +16,7 @@ export function buildOverview(snapshot: MetricsSnapshot) {
   const coolifyNames = new Map<string, string>();
   for (const app of coolify.applications) coolifyNames.set(app.uuid, app.name);
   for (const database of coolify.databases) coolifyNames.set(database.uuid, database.name);
+  for (const service of coolify.services) coolifyNames.set(service.uuid, service.name);
 
   return {
     collectedAt: snapshot.collectedAt.toISOString(),
@@ -62,6 +63,7 @@ export function buildOverview(snapshot: MetricsSnapshot) {
       applications: coolify.applications,
       databases: coolify.databases,
       servers: coolify.servers,
+      services: coolify.services,
     },
   };
 }

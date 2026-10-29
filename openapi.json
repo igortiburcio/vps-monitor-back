@@ -15,7 +15,10 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["ok", "degraded"],
+                      "enum": [
+                        "ok",
+                        "degraded"
+                      ],
                       "example": "ok"
                     },
                     "info": {
@@ -28,11 +31,17 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": ["status"],
+                        "required": [
+                          "status"
+                        ],
                         "properties": {
                           "status": {
                             "type": "string",
-                            "enum": ["up", "degraded", "down"]
+                            "enum": [
+                              "up",
+                              "degraded",
+                              "down"
+                            ]
                           },
                           "responseTime": {
                             "type": "number",
@@ -48,11 +57,17 @@
                       "example": {},
                       "additionalProperties": {
                         "type": "object",
-                        "required": ["status"],
+                        "required": [
+                          "status"
+                        ],
                         "properties": {
                           "status": {
                             "type": "string",
-                            "enum": ["up", "degraded", "down"]
+                            "enum": [
+                              "up",
+                              "degraded",
+                              "down"
+                            ]
                           },
                           "responseTime": {
                             "type": "number",
@@ -73,11 +88,17 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": ["status"],
+                        "required": [
+                          "status"
+                        ],
                         "properties": {
                           "status": {
                             "type": "string",
-                            "enum": ["up", "degraded", "down"]
+                            "enum": [
+                              "up",
+                              "degraded",
+                              "down"
+                            ]
                           },
                           "responseTime": {
                             "type": "number",
@@ -101,7 +122,10 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["error", "shutting_down"],
+                      "enum": [
+                        "error",
+                        "shutting_down"
+                      ],
                       "example": "error"
                     },
                     "info": {
@@ -114,11 +138,17 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": ["status"],
+                        "required": [
+                          "status"
+                        ],
                         "properties": {
                           "status": {
                             "type": "string",
-                            "enum": ["up", "degraded", "down"]
+                            "enum": [
+                              "up",
+                              "degraded",
+                              "down"
+                            ]
                           },
                           "responseTime": {
                             "type": "number",
@@ -140,11 +170,17 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": ["status"],
+                        "required": [
+                          "status"
+                        ],
                         "properties": {
                           "status": {
                             "type": "string",
-                            "enum": ["up", "degraded", "down"]
+                            "enum": [
+                              "up",
+                              "degraded",
+                              "down"
+                            ]
                           },
                           "responseTime": {
                             "type": "number",
@@ -170,11 +206,17 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": ["status"],
+                        "required": [
+                          "status"
+                        ],
                         "properties": {
                           "status": {
                             "type": "string",
-                            "enum": ["up", "degraded", "down"]
+                            "enum": [
+                              "up",
+                              "degraded",
+                              "down"
+                            ]
                           },
                           "responseTime": {
                             "type": "number",
@@ -190,7 +232,9 @@
             }
           }
         },
-        "tags": ["health"]
+        "tags": [
+          "health"
+        ]
       }
     },
     "/api/v1/me": {
@@ -207,7 +251,9 @@
             "bearer": []
           }
         ],
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/overview": {
@@ -224,7 +270,9 @@
             "bearer": []
           }
         ],
-        "tags": ["overview"]
+        "tags": [
+          "overview"
+        ]
       }
     },
     "/api/v1/host/current": {
@@ -241,7 +289,9 @@
             "bearer": []
           }
         ],
-        "tags": ["host"]
+        "tags": [
+          "host"
+        ]
       }
     },
     "/api/v1/host/history": {
@@ -258,7 +308,9 @@
             "bearer": []
           }
         ],
-        "tags": ["host"]
+        "tags": [
+          "host"
+        ]
       }
     },
     "/api/v1/containers": {
@@ -275,7 +327,9 @@
             "bearer": []
           }
         ],
-        "tags": ["containers"]
+        "tags": [
+          "containers"
+        ]
       }
     },
     "/api/v1/containers/{id}": {
@@ -301,7 +355,9 @@
             "bearer": []
           }
         ],
-        "tags": ["containers"]
+        "tags": [
+          "containers"
+        ]
       }
     },
     "/api/v1/containers/{id}/logs": {
@@ -327,7 +383,9 @@
             "bearer": []
           }
         ],
-        "tags": ["containers"]
+        "tags": [
+          "containers"
+        ]
       }
     },
     "/api/v1/coolify/applications": {
@@ -344,7 +402,9 @@
             "bearer": []
           }
         ],
-        "tags": ["coolify"]
+        "tags": [
+          "coolify"
+        ]
       }
     },
     "/api/v1/coolify/databases": {
@@ -361,7 +421,9 @@
             "bearer": []
           }
         ],
-        "tags": ["coolify"]
+        "tags": [
+          "coolify"
+        ]
       }
     },
     "/api/v1/coolify/servers": {
@@ -378,7 +440,28 @@
             "bearer": []
           }
         ],
-        "tags": ["coolify"]
+        "tags": [
+          "coolify"
+        ]
+      }
+    },
+    "/api/v1/coolify/services": {
+      "get": {
+        "operationId": "CoolifyController_services",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "coolify"
+        ]
       }
     },
     "/api/v1/coolify/deployments": {
@@ -395,7 +478,9 @@
             "bearer": []
           }
         ],
-        "tags": ["coolify"]
+        "tags": [
+          "coolify"
+        ]
       }
     },
     "/api/v1/events/stream": {
@@ -412,7 +497,9 @@
             "bearer": []
           }
         ],
-        "tags": ["events"]
+        "tags": [
+          "events"
+        ]
       }
     },
     "/api/v1/ai/chat": {
@@ -429,7 +516,9 @@
             "bearer": []
           }
         ],
-        "tags": ["ai"]
+        "tags": [
+          "ai"
+        ]
       }
     },
     "/api/v1/ai/conversations": {
@@ -446,7 +535,9 @@
             "bearer": []
           }
         ],
-        "tags": ["ai"]
+        "tags": [
+          "ai"
+        ]
       }
     },
     "/api/v1/ai/conversations/{id}": {
@@ -472,7 +563,9 @@
             "bearer": []
           }
         ],
-        "tags": ["ai"]
+        "tags": [
+          "ai"
+        ]
       }
     }
   },

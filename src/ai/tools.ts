@@ -180,6 +180,11 @@ export function buildTools(deps: ToolDependencies) {
           status: database.status,
           isPublic: database.isPublic,
         })),
+        services: inventory.services.map((service) => ({
+          name: service.name,
+          type: service.type,
+          status: service.status,
+        })),
         servers: inventory.servers,
       });
     },
