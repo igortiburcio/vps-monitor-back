@@ -30,6 +30,18 @@ services:
       - /:/host/root:ro
     expose:
       - '3000'
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'bun',
+          '-e',
+          "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/health/live').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     extra_hosts:
       # Coolify escuta em 8080 dentro do container dele, publicado na 8000 do host.
       # Evita o hairpin pelo Cloudflare ao chamar a própria API.

@@ -13,11 +13,11 @@
     "format:check": "prettier --check .",
     "test": "bun test",
     "db:generate": "drizzle-kit generate",
-    "db:setup": "bun src/db/setup.ts",
+    "db:setup": "bun src/infra/database/scripts/setup.ts",
     "db:studio": "drizzle-kit studio",
-    "seed:user": "bun src/db/seed.ts",
-    "create:user": "bun src/db/create-user.ts",
-    "openapi:export": "bun src/scripts/export-openapi.ts"
+    "seed:user": "bun src/infra/database/scripts/seed.ts",
+    "create:user": "bun src/infra/database/scripts/create-user.ts",
+    "openapi:export": "bun src/http/scripts/export-openapi.ts"
   },
   "dependencies": {
     "@fastify/cors": "^11.1.0",

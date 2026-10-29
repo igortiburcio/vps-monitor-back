@@ -43,13 +43,29 @@ existir no container da API.
 
 ## Endpoints
 
-| Método | Rota             | Auth       |
-| ------ | ---------------- | ---------- |
-| GET    | `/health`        | pública    |
-| GET    | `/api/docs`      | pública    |
-| GET    | `/api/docs-json` | pública    |
-| ALL    | `/api/auth/*`    | BetterAuth |
-| GET    | `/api/v1/me`     | bearer     |
+| Método | Rota                                        | Auth                       |
+| ------ | ------------------------------------------- | -------------------------- |
+| GET    | `/health/live`                              | pública                    |
+| GET    | `/health/ready`                             | pública                    |
+| GET    | `/health`                                   | pública (alias de `ready`) |
+| GET    | `/api/docs` · `/api/docs-json`              | pública                    |
+| ALL    | `/api/auth/*`                               | BetterAuth                 |
+| GET    | `/api/v1/me`                                | bearer                     |
+| GET    | `/api/v1/overview`                          | bearer                     |
+| GET    | `/api/v1/host/current` · `/history`         | bearer                     |
+| GET    | `/api/v1/containers` · `/:id` · `/:id/logs` | bearer                     |
+| GET    | `/api/v1/coolify/*`                         | bearer                     |
+| GET    | `/api/v1/events/stream`                     | bearer (SSE)               |
+| POST   | `/api/v1/ai/chat`                           | bearer (SSE)               |
+| GET    | `/api/v1/ai/conversations` · `/:id`         | bearer                     |
+| GET    | `/api/v1/diagnostics`                       | bearer                     |
+
+### Liveness x readiness
+
+- `/health/live` — só o processo. É o que o **HEALTHCHECK do Docker** usa: se dependesse
+  do Postgres, um blip do banco reiniciaria o container sem necessidade.
+- `/health/ready` — processo + dependências. É o que o **Coolify/Traefik** usa para
+  decidir se o container recebe tráfego.
 
 ## Autenticação
 
@@ -62,17 +78,50 @@ curl -X POST http://localhost:4100/api/auth/sign-in/email \
 # a resposta traz `token` e o header `set-auth-token`
 ```
 
+## Arquitetura
+
+Quatro camadas, com dependência apontando sempre para dentro:
+
+```
+http/          -> controllers, pipes, filtros (entrada)
+application/   -> casos de uso (regras da aplicação)
+domain/        -> entidades, erros e ports (zero framework)
+infra/         -> adapters: Postgres, Docker, Coolify, LangGraph, BetterAuth
+```
+
+`domain/` não importa `@nestjs`, `drizzle-orm`, `fastify` nem `better-auth`.
+`application/` só conhece os **ports**; `infra/` é quem implementa.
+A regra é verificada por teste (`test/architecture.test.ts`), não por convenção.
+
+Inversão de dependência via `abstract class` como token (sem `@Inject`/`Symbol`):
+
+```ts
+// domain/ports/host-metrics.port.ts
+export abstract class HostMetricsPort {
+  abstract sample(): Promise<HostMetrics>;
+}
+
+// infra/infra.module.ts (composition root)
+{ provide: HostMetricsPort, useClass: ProcHostMetricsAdapter }
+```
+
 ## Estrutura
 
 ```
 src/
-├── main.ts            FastifyAdapter + Swagger
-├── app.module.ts
-├── config/env.ts      validação do ambiente (zod)
-├── auth/              better-auth + MeController
-├── common/            health check
-└── db/                schema, client, setup, migrate, seed
-drizzle/               migrations versionadas
+├── domain/          entities · ports · errors · sanitization
+├── application/     use-cases · mappers · dto
+├── infra/           config · database · host · docker · coolify · ai · auth · cache · health · scheduling
+├── http/            controllers · pipes · filters · dto · scripts
+├── app.module.ts    composition root
+└── main.ts
+test/
+├── domain/          regras puras
+├── application/     casos de uso com fakes (sem banco, sem rede)
+├── infra/           parsers de /proc e env
+├── fakes/           implementações em memória dos ports
+└── architecture.test.ts
+drizzle/             migrations versionadas
 ```
 
 ## Deploy

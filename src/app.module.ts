@@ -1,30 +1,35 @@
 import { Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
-import { TerminusModule } from '@nestjs/terminus';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
 
-import { AiModule } from './ai/ai.module.js';
-import { ApiModule } from './api/v1/api.module.js';
-import { auth } from './auth/auth.js';
-import { MeController } from './auth/me.controller.js';
-import { CollectorsModule } from './collectors/collectors.module.js';
-import { HealthController } from './common/health.controller.js';
-import { DatabaseModule } from './db/database.module.js';
-import { MetricsModule } from './metrics/metrics.module.js';
+import { ApplicationModule } from './application/application.module.js';
+import { DomainErrorFilter } from './http/filters/domain-error.filter.js';
+import { HttpModule } from './http/http.module.js';
+import { AiModule } from './infra/ai/ai.module.js';
+import { auth } from './infra/auth/better-auth.js';
+import { DatabaseModule } from './infra/database/database.module.js';
+import { InfraModule } from './infra/infra.module.js';
+import { SchedulerModule } from './infra/scheduling/scheduler.module.js';
 
+/**
+ * Composition root da aplicação.
+ * Aqui só há imports e bindings globais — nenhuma regra de negócio.
+ */
 @Module({
   imports: [
     DatabaseModule,
-    CollectorsModule,
-    MetricsModule,
-    ApiModule,
+    InfraModule,
+    ApplicationModule,
     AiModule,
-    TerminusModule,
+    SchedulerModule,
+    HttpModule,
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 120 }]),
     AuthModule.forRoot({ auth }),
   ],
-  controllers: [HealthController, MeController],
-  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
+  providers: [
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
+    { provide: APP_FILTER, useClass: DomainErrorFilter },
+  ],
 })
 export class AppModule {}

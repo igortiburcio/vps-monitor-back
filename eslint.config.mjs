@@ -43,5 +43,13 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-assignment': 'off',
     },
   },
+  {
+    // Fakes implementam ports assíncronos sem I/O real
+    files: ['test/**/*.ts'],
+    rules: {
+      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+    },
+  },
   prettierConfig,
 );
