@@ -2,7 +2,7 @@ import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { bearer } from 'better-auth/plugins';
 
-import { env } from '../config/env.js';
+import { allowedOrigins, env } from '../config/env.js';
 import { db } from '../db/client.js';
 import * as schema from '../db/schema.js';
 
@@ -26,7 +26,7 @@ export const auth = betterAuth({
   // Permite autenticar com Authorization: Bearer (usado pelo app React Native)
   plugins: [bearer()],
 
-  trustedOrigins: [env.APP_URL],
+  trustedOrigins: allowedOrigins,
 
   session: {
     expiresIn: 60 * 60 * 24 * 30,

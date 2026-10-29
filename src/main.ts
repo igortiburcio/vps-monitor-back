@@ -6,7 +6,7 @@ import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fa
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module.js';
-import { env, isProduction } from './config/env.js';
+import { allowedOrigins, env, isProduction } from './config/env.js';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -21,7 +21,7 @@ async function bootstrap(): Promise<void> {
   );
 
   app.enableCors({
-    origin: isProduction ? [env.APP_URL] : true,
+    origin: isProduction ? allowedOrigins : true,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   });

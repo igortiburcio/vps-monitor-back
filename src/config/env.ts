@@ -27,6 +27,9 @@ export const envSchema = z.object({
   COOLIFY_API_URL: z.url().optional(),
   COOLIFY_API_TOKEN: z.string().optional(),
 
+  /** Origens extras de CORS, separadas por vírgula (ex.: web em dev). */
+  CORS_ORIGINS: z.string().optional(),
+
   LLM_PROVIDER: z.enum(['groq', 'deepseek']).default('groq'),
   GROQ_API_KEY: z.string().optional(),
   DEEPSEEK_API_KEY: z.string().optional(),
@@ -55,3 +58,16 @@ function parseEnv(raw: Record<string, unknown>): Env {
 export const env = parseEnv(process.env);
 
 export const isProduction = env.NODE_ENV === 'production';
+
+/**
+ * Origens aceitas pelo CORS e pelo BetterAuth.
+ * `APP_URL` é sempre a origem principal; `CORS_ORIGINS` adiciona extras
+ * (ex.: o app web rodando em http://localhost:8081).
+ */
+export const allowedOrigins = [
+  env.APP_URL,
+  ...(env.CORS_ORIGINS ?? '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean),
+];
