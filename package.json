@@ -16,6 +16,7 @@
     "db:setup": "bun src/db/setup.ts",
     "db:studio": "drizzle-kit studio",
     "seed:user": "bun src/db/seed.ts",
+    "create:user": "bun src/db/create-user.ts",
     "openapi:export": "bun src/scripts/export-openapi.ts"
   },
   "dependencies": {
