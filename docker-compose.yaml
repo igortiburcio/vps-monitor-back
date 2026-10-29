@@ -29,6 +29,10 @@ services:
       - /:/host/root:ro
     expose:
       - '3000'
+    extra_hosts:
+      # Coolify escuta em 8080 dentro do container dele, publicado na 8000 do host.
+      # Evita o hairpin pelo Cloudflare ao chamar a própria API.
+      - 'host.docker.internal:host-gateway'
     networks:
       - default
       # Necessário para alcançar o Postgres e o Traefik (rodam na network do Coolify)
