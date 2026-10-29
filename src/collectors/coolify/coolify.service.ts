@@ -114,7 +114,7 @@ export class CoolifyService {
   private lastWarnAt = 0;
 
   get configured(): boolean {
-    return Boolean(env.COOLIFY_URL && env.COOLIFY_TOKEN);
+    return Boolean(env.COOLIFY_API_URL && env.COOLIFY_API_TOKEN);
   }
 
   /** Diagnóstico: URL usada, status e corpo do erro (nunca expõe o token). */
@@ -125,13 +125,18 @@ export class CoolifyService {
     error: string | null;
   }> {
     if (!this.configured) {
-      return { url: env.COOLIFY_URL ?? null, ok: false, status: null, error: 'não configurado' };
+      return {
+        url: env.COOLIFY_API_URL ?? null,
+        ok: false,
+        status: null,
+        error: 'não configurado',
+      };
     }
 
     try {
-      const response = await fetch(`${env.COOLIFY_URL}/api/v1/applications`, {
+      const response = await fetch(`${env.COOLIFY_API_URL}/api/v1/applications`, {
         headers: {
-          Authorization: `Bearer ${env.COOLIFY_TOKEN}`,
+          Authorization: `Bearer ${env.COOLIFY_API_TOKEN}`,
           Accept: 'application/json',
         },
         signal: AbortSignal.timeout(8000),
@@ -140,14 +145,14 @@ export class CoolifyService {
       const body = await response.text();
 
       return {
-        url: env.COOLIFY_URL ?? null,
+        url: env.COOLIFY_API_URL ?? null,
         ok: response.ok,
         status: response.status,
         error: response.ok ? null : body.slice(0, 300),
       };
     } catch (error) {
       return {
-        url: env.COOLIFY_URL ?? null,
+        url: env.COOLIFY_API_URL ?? null,
         ok: false,
         status: null,
         error: error instanceof Error ? error.message : 'erro desconhecido',
@@ -266,9 +271,9 @@ export class CoolifyService {
 
   private async fetch<T>(path: string): Promise<T | null> {
     try {
-      const response = await fetch(`${env.COOLIFY_URL}/api/v1${path}`, {
+      const response = await fetch(`${env.COOLIFY_API_URL}/api/v1${path}`, {
         headers: {
-          Authorization: `Bearer ${env.COOLIFY_TOKEN}`,
+          Authorization: `Bearer ${env.COOLIFY_API_TOKEN}`,
           Accept: 'application/json',
         },
         signal: AbortSignal.timeout(8000),

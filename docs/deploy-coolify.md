@@ -34,8 +34,8 @@ O Coolify usa a fonte **Public GitHub** (não há GitHub App configurado na inst
 | `HOST_SYS`               | `/host/sys`                                                                |
 | `HOST_ROOT`              | `/host/root`                                                               |
 | `DOCKER_PROXY_URL`       | `http://docker-socket-proxy:2375`                                          |
-| `COOLIFY_URL`            | `https://coolify.duduisonfire.com`                                         |
-| `COOLIFY_TOKEN`          | token **somente leitura**                                                  |
+| `COOLIFY_API_URL`        | `https://coolify.duduisonfire.com`                                         |
+| `COOLIFY_API_TOKEN`      | token **somente leitura**                                                  |
 | `LLM_PROVIDER`           | `groq`                                                                     |
 | `GROQ_API_KEY`           | chave da Groq                                                              |
 | `LLM_MODEL`              | `openai/gpt-oss-20b`                                                       |

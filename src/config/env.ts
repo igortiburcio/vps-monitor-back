@@ -24,8 +24,8 @@ export const envSchema = z.object({
   HOST_ROOT: z.string().default('/'),
   DOCKER_PROXY_URL: z.url().default('http://docker-socket-proxy:2375'),
 
-  COOLIFY_URL: z.url().optional(),
-  COOLIFY_TOKEN: z.string().optional(),
+  COOLIFY_API_URL: z.url().optional(),
+  COOLIFY_API_TOKEN: z.string().optional(),
 
   LLM_PROVIDER: z.enum(['groq', 'deepseek']).default('groq'),
   GROQ_API_KEY: z.string().optional(),
