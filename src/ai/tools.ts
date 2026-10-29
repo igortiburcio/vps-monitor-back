@@ -32,10 +32,16 @@ export function buildTools(deps: ToolDependencies) {
 
       const overview = buildOverview(snapshot);
 
+      // Só os maiores consumidores: o snapshot completo estoura o TPM do provedor
+      const topContainers = [...overview.containers]
+        .sort((a, b) => (b.memUsed ?? 0) - (a.memUsed ?? 0))
+        .slice(0, 10);
+
       return json({
         collectedAt: overview.collectedAt,
         host: overview.host,
-        containers: overview.containers.map((container) => ({
+        totalContainers: overview.containers.length,
+        topContainersByMemory: topContainers.map((container) => ({
           name: container.displayName,
           state: container.state,
           cpuPct: container.cpuPct,

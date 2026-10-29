@@ -19,7 +19,7 @@ export interface StoredMessage {
   createdAt: string;
 }
 
-const HISTORY_LIMIT = 20;
+const HISTORY_LIMIT = 10;
 
 @Injectable()
 export class ConversationsService {

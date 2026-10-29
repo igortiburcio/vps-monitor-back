@@ -93,7 +93,8 @@ function createChatModel() {
     apiKey: env.GROQ_API_KEY ?? '',
     model: env.LLM_MODEL,
     temperature: 0,
-    maxRetries: 1,
+    // O free tier tem TPM baixo; retentativas evitam falha em picos
+    maxRetries: 3,
   });
 }
 
@@ -148,12 +149,16 @@ export class AgentService {
         }
       }
     } catch (error) {
-      this.logger.error(
-        `falha no agente: ${error instanceof Error ? error.message : 'erro desconhecido'}`,
-      );
+      const message = error instanceof Error ? error.message : 'erro desconhecido';
+      this.logger.error(`falha no agente: ${message}`);
+
+      const isRateLimit = message.includes('429') || message.includes('rate_limit');
+
       yield {
         type: 'error',
-        message: 'Não consegui concluir a consulta ao modelo. Tente novamente.',
+        message: isRateLimit
+          ? 'Limite de tokens do provedor atingido. Tente novamente em alguns segundos.'
+          : 'Não consegui concluir a consulta ao modelo. Tente novamente.',
       };
     }
   }
