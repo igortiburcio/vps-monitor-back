@@ -1,0 +1,54 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
+      APP_URL: ${APP_URL}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      DATABASE_URL: ${DATABASE_URL}
+      HOST_PROC: ${HOST_PROC}
+      HOST_SYS: ${HOST_SYS}
+      HOST_ROOT: ${HOST_ROOT}
+      DOCKER_PROXY_URL: ${DOCKER_PROXY_URL}
+      COOLIFY_URL: ${COOLIFY_URL}
+      COOLIFY_TOKEN: ${COOLIFY_TOKEN}
+      LLM_PROVIDER: ${LLM_PROVIDER}
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      LLM_MODEL: ${LLM_MODEL}
+      METRICS_INTERVAL_MS: ${METRICS_INTERVAL_MS}
+      METRICS_RETENTION_DAYS: ${METRICS_RETENTION_DAYS}
+    # Métricas reais do host (sem isso o container lê o próprio /proc)
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/host/root:ro
+    expose:
+      - '3000'
+    depends_on:
+      - docker-socket-proxy
+
+  # Proxy read-only do socket do Docker.
+  # Montar /var/run/docker.sock direto na API equivaleria a root no host.
+  docker-socket-proxy:
+    image: tecnativa/docker-socket-proxy:0.3
+    restart: unless-stopped
+    environment:
+      CONTAINERS: 1
+      INFO: 1
+      VERSION: 1
+      POST: 0
+      EXEC: 0
+      IMAGES: 0
+      NETWORKS: 0
+      VOLUMES: 0
+      EVENTS: 0
+      SYSTEM: 0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    expose:
+      - '2375'
