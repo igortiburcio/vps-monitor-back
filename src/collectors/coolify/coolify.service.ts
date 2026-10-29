@@ -117,6 +117,44 @@ export class CoolifyService {
     return Boolean(env.COOLIFY_URL && env.COOLIFY_TOKEN);
   }
 
+  /** Diagnóstico: URL usada, status e corpo do erro (nunca expõe o token). */
+  async probe(): Promise<{
+    url: string | null;
+    ok: boolean;
+    status: number | null;
+    error: string | null;
+  }> {
+    if (!this.configured) {
+      return { url: env.COOLIFY_URL ?? null, ok: false, status: null, error: 'não configurado' };
+    }
+
+    try {
+      const response = await fetch(`${env.COOLIFY_URL}/api/v1/applications`, {
+        headers: {
+          Authorization: `Bearer ${env.COOLIFY_TOKEN}`,
+          Accept: 'application/json',
+        },
+        signal: AbortSignal.timeout(8000),
+      });
+
+      const body = await response.text();
+
+      return {
+        url: env.COOLIFY_URL ?? null,
+        ok: response.ok,
+        status: response.status,
+        error: response.ok ? null : body.slice(0, 300),
+      };
+    } catch (error) {
+      return {
+        url: env.COOLIFY_URL ?? null,
+        ok: false,
+        status: null,
+        error: error instanceof Error ? error.message : 'erro desconhecido',
+      };
+    }
+  }
+
   async inventory(): Promise<CoolifyInventory> {
     if (!this.configured) {
       return {
